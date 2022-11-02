@@ -4,6 +4,10 @@ terraform {
       source = "NaverCloudPlatform/ncloud"
       version = "2.3.0"
     }
+     time = {
+      source  = "hashicorp/time"
+      #version = "~> X.Y" # where X.Y is the current major version and minor version
+    }
   }
 }
 
