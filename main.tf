@@ -149,7 +149,7 @@ resource "ncloud_public_ip" "public_ip" {
   server_instance_no = ncloud_server.server[each.key].id
   depends_on = [ncloud_server.server]
 }
-
+/*
 resource "null_resource" "previous" {}
 
 resource "time_sleep" "wait_30_seconds" {
@@ -157,7 +157,21 @@ resource "time_sleep" "wait_30_seconds" {
 
   destroy_duration = "2m"
 }
+*/
+  
+resource "null_resource" "set_initial_state" {
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command = "echo \"0\" > counter"
+  }
+}
 
+resource "null_resource" "wait" {
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command = "while [[ $(cat counter) != \"${var.index}\" ]]; do sleep 60; done; sleep 60;"
+  }
+}
 resource "ncloud_block_storage" "storage" {
   for_each = var.server_storage
   server_instance_no = ncloud_server.server[each.value.server_key].id
@@ -165,5 +179,5 @@ resource "ncloud_block_storage" "storage" {
   size = each.value.disk_size
   stop_instance_before_detaching = "true"	//
   # description = "${ncloud_server.server[each.value.server_key] - }"
-  #depends_on = [time_sleep.wait_30_seconds]
+  depends_on = [null_resource.wait]
 }
