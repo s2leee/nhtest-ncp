@@ -155,7 +155,7 @@ resource "null_resource" "previous" {}
 resource "time_sleep" "wait_30_seconds" {
   depends_on = [null_resource.previous]
 
-  destroy_duration = "1m"
+  destroy_duration = "2m"
 }
 
 resource "ncloud_block_storage" "storage" {
